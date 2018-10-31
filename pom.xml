@@ -236,15 +236,13 @@
 										<argument>myGroup</argument>
 										<argument>--deploy-to</argument>
 										<argument>--host-name</argument>
-										<argument>localhost</argument>
+										<argument>127.0.0.1</argument>
 										<argument>--port</argument>
 										<argument>8090</argument>
 										<argument>--user-name</argument>
 										<argument>${anm.username}</argument>
 										<argument>--password</argument>
-										<argument>${anm.password}</argument>
-										<argument>--group-name</argument>
-										<argument>myGroup</argument>										
+										<argument>${anm.password}</argument>										
 										<argument>--tracelevel=INFO</argument>
 										<argument>--tracedir</argument>
 										<argument>${project.build.directory}</argument>
