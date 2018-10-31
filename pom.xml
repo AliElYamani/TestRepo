@@ -236,7 +236,7 @@
 										<argument>myGroup</argument>
 										<argument>--deploy-to</argument>
 										<argument>--host-name</argument>
-										<argument>127.0.0.1</argument>
+										<argument>localhost</argument>
 										<argument>--port</argument>
 										<argument>8090</argument>
 										<argument>--user-name</argument>
