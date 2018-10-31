@@ -240,9 +240,9 @@
 										<argument>--port</argument>
 										<argument>8090</argument>
 										<argument>--user-name</argument>
-										<argument>${anm.username}</argument>
+										<argument>admin</argument>
 										<argument>--password</argument>
-										<argument>${anm.password}</argument>										
+										<argument>changeme</argument>										
 										<argument>--tracelevel=INFO</argument>
 										<argument>--tracedir</argument>
 										<argument>${project.build.directory}</argument>
