@@ -73,7 +73,7 @@
 		<!-- Configuration groupe/instance API Gateway où déployer les policies -->
 		<!-- ================================================================= 	-->
 
-		<apigateway.group.name>NewGroup</apigateway.group.name>
+		<apigateway.group.name>myGroup</apigateway.group.name>
 
 		<!-- _________________________________________________________________ -->
 
@@ -242,7 +242,7 @@
 										<argument>--password</argument>
 										<argument>${anm.password}</argument>
 										<argument>--group-name</argument>
-										<argument>NewGroup</argument>										
+										<argument>myGroup</argument>										
 										<argument>--tracelevel=INFO</argument>
 										<argument>--tracedir</argument>
 										<argument>${project.build.directory}</argument>
