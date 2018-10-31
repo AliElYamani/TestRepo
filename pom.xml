@@ -1,0 +1,289 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>XEA</groupId>
+	<artifactId>api-security</artifactId>
+	<version>${revision}</version>
+	<packaging>jar</packaging>
+	<name>api-security</name>
+	<description>API Security Project</description>
+
+	<organization>
+		<name>XEA</name>
+	</organization>
+
+	<inceptionYear>2017</inceptionYear>
+
+	<issueManagement>
+		<system>redmine</system>
+	</issueManagement>
+
+	<ciManagement>
+		<system>jenkins</system>
+		<url>localhost:8080/jenkins/</url>
+		<notifiers>
+			<notifier>
+				<type>mail</type>
+				<address/>
+				<sendOnError>false</sendOnError>
+				<sendOnFailure>false</sendOnFailure>
+				<sendOnSuccess>false</sendOnSuccess>
+				<sendOnWarning>false</sendOnWarning>
+			</notifier>
+		</notifiers>
+	</ciManagement>
+
+
+	<scm>
+		<connection>scm:git@github.com:alielyamani/TestRepo.</connection>
+		<developerConnection>scm:git@github.com:alielyamani/TestRepo.git</developerConnection>
+		<url>git@github.com:alielyamani/TestRepo</url>
+	</scm>
+	
+
+	<properties>
+		<jar.skipIfEmpty>true</jar.skipIfEmpty>
+		<build.number>SNAPSHOT</build.number>
+		<build.id>1</build.id>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<package.name>${project.artifactId}-${timestamp}</package.name>
+		<build.src.dir>${project.build.directory}/src</build.src.dir>
+		<api.front.base.dir>${basedir}</api.front.base.dir>
+		<api.projects.src.dir>${api.front.base.dir}/api-projects</api.projects.src.dir>
+		<server.settings.src.dir>${api.front.base.dir}/server-settings</server.settings.src.dir>
+		<anm.username>defaultadmin</anm.username>
+		<anm.password>defaultpassword</anm.password>
+		<timestamp>${maven.build.timestamp}</timestamp>
+		<maven.build.timestamp.format>yyyyMMddHHmm</maven.build.timestamp.format>
+		<revision>Build-${build.number}_${timestamp}</revision>
+
+		<!-- ================================================================= -->
+		<!-- Déclaration des projets policies à inclure lors du packaging -->
+		<!-- ================================================================= -->
+
+		<subproject.1>my_sec_proj_3010</subproject.1>		
+		
+		<!-- ================================================================= -->
+		<!-- Déclaration des projets server settings à inclure lors du packaging -->
+		<!-- ================================================================= -->
+
+		<server.settings>my_serv_proj_3010</server.settings>
+
+		<!-- ================================================================= 	-->
+		<!-- Configuration groupe/instance API Gateway où déployer les policies -->
+		<!-- ================================================================= 	-->
+
+		<apigateway.group.name>NewGroup</apigateway.group.name>
+
+		<!-- _________________________________________________________________ -->
+
+	</properties>
+
+	<!-- <build> -->
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>3.0.2</version>
+				<executions>
+					<execution>
+						<id>copy-project</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<inherited>false</inherited>
+						<configuration>
+							<outputDirectory>${build.src.dir}</outputDirectory>
+							<resources>
+								<resource>
+									<directory>${api.front.base.dir}</directory>
+									<excludes>
+										<exclude>**/env/</exclude>
+										<exclude>**/src/</exclude>
+										<exclude>**/api-tests/</exclude>
+										<exclude>**/target/</exclude>
+										<exclude>pom.xml</exclude>
+										<exclude>README.md</exclude>
+										<exclude>**/.projdeps.json</exclude>
+										<exclude>**/meta-inf/**</exclude>
+										<exclude>**/.project</exclude>
+									</excludes>
+								</resource>								
+							</resources>
+						</configuration>
+					</execution>						
+				</executions>
+			</plugin>
+      			<plugin>
+        			<artifactId>maven-assembly-plugin</artifactId>
+        			<version>2.5.3</version>
+        			<configuration>
+          				<descriptor>${project.build.directory}/src/dep.xml</descriptor>
+        			</configuration>
+					<executions>
+						<execution>
+							<id>create-archive</id>
+							<phase>package</phase>
+							<goals>
+							<goal>single</goal>
+							</goals>
+						</execution>
+					</executions>					
+      			</plugin>
+		</plugins>	
+	</build>
+	
+	
+	<!-- <profiles> -->
+	
+	<profiles>
+
+			
+		<profile>
+			<id>Windows</id>
+			<activation>
+				<os>
+					<family>Windows</family>
+				</os>
+			</activation>
+			<properties>
+				<projpack.script>D:\Axway-7.5.3\apigateway\Win32\bin\projpack.bat</projpack.script>
+				<projdeploy.script>D:\Axway-7.5.3\apigateway\Win32\bin\projdeploy.bat</projdeploy.script>
+			</properties>
+		</profile>	
+		<profile>
+			<id>dev</id>
+			<build>
+				<plugins>				
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>exec-maven-plugin</artifactId>
+						<version>1.6.0</version>
+						<executions>
+							<!-- Config PROJPACK (phase de packaging : création .pol & .env) -->
+							<execution>
+								<id>exec-projpack</id>
+								<phase>package</phase>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+								<inherited>false</inherited>
+								<configuration>
+									<executable>${projpack.script}</executable>
+									<arguments>
+										<argument>--create</argument>
+										<argument>--name</argument>
+										<argument>${package.name}-dev</argument>
+										<argument>--type</argument>
+										<argument>pol</argument>
+										<argument>--polprop</argument>
+										<argument>Name:${project.name}</argument>
+										<argument>--polprop</argument>
+										<argument>Description:${project.artifactId}-${project.version}-dev</argument>							
+										<argument>--passphrase-none</argument>
+										<argument>--tracelevel=INFO</argument>				
+
+										<!-- ================================================================= -->
+										<!-- Debut de la declaration des projets policies -->
+										<!-- ================================================================= -->
+
+										<!-- server-settings -->
+										<argument>--add</argument>
+										<argument>${build.src.dir}/server-settings/${server.settings}</argument>													
+										<argument>--projpass-none</argument>
+										
+										<!-- projet 1 -->
+										<argument>--add</argument>
+										<argument>${build.src.dir}/api-projects/${subproject.1}</argument>
+										<argument>--projpass-none</argument>
+
+										
+										<argument>--dir</argument>
+										<argument>${project.build.directory}</argument>
+										<argument>--tracedir</argument>
+										<argument>${project.build.directory}</argument>
+										
+										
+										<!-- _________________________________________________________________ -->
+
+
+
+									</arguments>
+								</configuration>
+							</execution>
+							<execution>
+								<id>exec-projdeploy</id>
+								<phase>integration-test</phase>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+								<inherited>false</inherited>
+								<configuration>
+									<executable>${projdeploy.script}</executable>
+									<arguments>
+										<argument>--passphrase-none</argument>
+										<argument>--change-pass-to-none</argument>
+										<argument>--dir</argument>
+										<argument>${project.build.directory}</argument>
+										<argument>--name</argument>
+										<argument>${package.name}-dev</argument>
+										<argument>--type</argument>
+										<argument>pol</argument>
+										<argument>--apply-env</argument>
+										<argument>${build.src.dir}/dev.env</argument>
+										<argument>--deploy-to</argument>
+										<argument>--host-name</argument>
+										<argument>localhost</argument>
+										<argument>--port</argument>
+										<argument>8090</argument>
+										<argument>--user-name</argument>
+										<argument>${anm.username}</argument>
+										<argument>--password</argument>
+										<argument>${anm.password}</argument>
+										<argument>--group-name</argument>
+										<argument>NewGroup</argument>										
+										<argument>--tracelevel=INFO</argument>
+										<argument>--tracedir</argument>
+										<argument>${project.build.directory}</argument>
+									</arguments>
+								</configuration>
+							</execution>								
+						</executions>
+					</plugin>
+					<plugin>
+						<artifactId>maven-resources-plugin</artifactId>
+						<version>3.0.2</version>
+						<executions>
+							<execution>
+								<id>copy-env-file</id>
+								<phase>prepare-package</phase>
+								<goals>
+									<goal>copy-resources</goal>
+								</goals>
+								<inherited>false</inherited>
+								<configuration>
+									<outputDirectory>${build.src.dir}</outputDirectory>
+									<resources>
+										<resource>
+											<directory>${api.front.base.dir}/env</directory>
+											<includes>
+												<include>dev.env</include>
+											</includes>
+										</resource>							
+									</resources>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+						
+	</profiles>
+	<!-- Suppression des ressources inutiles (ex : .jar) -->
+	<!-- TODO: -->
+	<!-- Fin suppression des ressources inutiles -->
+	<!-- </build> -->
+
+</project>	
