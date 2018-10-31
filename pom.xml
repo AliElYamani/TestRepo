@@ -232,6 +232,8 @@
 										<argument>pol</argument>
 										<argument>--apply-env</argument>
 										<argument>${build.src.dir}/dev.env</argument>
+										<argument>--group-name</argument>
+										<argument>myGroup</argument>
 										<argument>--deploy-to</argument>
 										<argument>--host-name</argument>
 										<argument>localhost</argument>
